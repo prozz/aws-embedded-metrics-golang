@@ -1,6 +1,6 @@
 # aws-embedded-metrics-golang
 
-Golang implementation of AWS CloudWatch [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)
+Go implementation of AWS CloudWatch [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)
 
 It's aim is to simplify reporting metrics to CloudWatch:
 - using EMF avoids additional HTTP calls as it just logs JSON to stdout
