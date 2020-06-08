@@ -1,5 +1,7 @@
 # aws-embedded-metrics-golang
 
+![Go](https://github.com/prozz/aws-embedded-metrics-golang/workflows/Go/badge.svg?branch=master)
+
 Go implementation of AWS CloudWatch [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)
 
 It's aim is to simplify reporting metrics to CloudWatch:
