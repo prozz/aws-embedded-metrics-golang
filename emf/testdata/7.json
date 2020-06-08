@@ -1,0 +1,29 @@
+{
+  "_aws": {
+    "Timestamp": "<<PRESENCE>>",
+    "CloudWatchMetrics": [
+      {
+        "Metrics": [
+          {
+            "Name": "bar",
+            "Unit": "Bytes/Second"
+          }
+        ],
+        "Namespace": "aws-embedded-metrics",
+        "Dimensions": null
+      },
+      {
+        "Metrics": [
+          {
+            "Name": "foo",
+            "Unit": "Bits"
+          }
+        ],
+        "Namespace": "aws-embedded-metrics",
+        "Dimensions": null
+      }
+    ]
+  },
+  "foo": 33.66,
+  "bar": 666
+}

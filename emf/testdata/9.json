@@ -1,0 +1,29 @@
+{
+  "_aws": {
+    "Timestamp": "<<PRESENCE>>",
+    "CloudWatchMetrics": [
+      {
+        "Metrics": [
+          {
+            "Name": "foo",
+            "Unit": "None"
+          }
+        ],
+        "Namespace": "aws-embedded-metrics",
+        "Dimensions": [
+          [
+            "ServiceName",
+            "ServiceType"
+          ]
+        ]
+      }
+    ]
+  },
+  "ServiceName": "some-func-name",
+  "ServiceType": "AWS::Lambda::Function",
+  "executionEnvironment": "golang",
+  "memorySize": "128",
+  "functionVersion": "1",
+  "logStreamId": "log/stream",
+  "foo": 33
+}
