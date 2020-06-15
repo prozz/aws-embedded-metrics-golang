@@ -19,6 +19,6 @@ type DimensionSet []string
 
 // MetricDefinition struct as defined in AWS Embedded Metrics Format spec.
 type MetricDefinition struct {
-	Name string         `json:"Name"`
+	Name string     `json:"Name"`
 	Unit MetricUnit `json:"Unit,omitempty"`
 }
