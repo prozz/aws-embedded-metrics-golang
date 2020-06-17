@@ -195,6 +195,25 @@ func TestEmf(t *testing.T) {
 	}
 }
 
+func TestLogger_LogSampled(t *testing.T) {
+
+	t.Run("never", func(t *testing.T) {
+		var buf bytes.Buffer
+		emf.NewFor(&buf).Metric("foo", 1).LogSampled(0)
+		if buf.Len() > 0 {
+			t.Fatal("should be empty")
+		}
+	})
+
+	t.Run("always", func(t *testing.T) {
+		var buf bytes.Buffer
+		emf.NewFor(&buf).Metric("foo", 1).LogSampled(100)
+		if buf.Len() == 0 {
+			t.Fatal("should not be empty")
+		}
+	})
+}
+≠
 func setenv(t *testing.T, env map[string]string) {
 	for k, v := range env {
 		err := os.Setenv(k, v)
