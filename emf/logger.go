@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -167,6 +168,15 @@ func (l *Logger) Log() {
 	}
 	buf, _ := json.Marshal(l.values)
 	_, _ = fmt.Fprintln(l.out, string(buf))
+}
+
+// LogSampled samples Log calls based on a rate.
+// Ex. rate of 0.7 means Log will be called 70% of a time.
+func (l *Logger) LogSampled(rate float64) {
+	rand.Seed(time.Now().UnixNano())
+	if rand.Float64() < rate {
+		l.Log()
+	}
 }
 
 // NewContext creates new context for given logger.
