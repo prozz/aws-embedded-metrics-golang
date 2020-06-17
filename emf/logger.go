@@ -107,10 +107,20 @@ func (l *Logger) Metric(name string, value int) *Logger {
 	return l
 }
 
+// Metrics puts all of the int metrics on default context.
+func (l *Logger) Metrics(m map[string]int) *Logger {
+	return l.MetricsAs(m, None)
+}
+
 // MetricFloat puts float metric on default context.
 func (l *Logger) MetricFloat(name string, value float64) *Logger {
 	l.defaultContext.put(name, value, None)
 	return l
+}
+
+// MetricsFloat puts all of the float metrics on default context.
+func (l *Logger) MetricsFloat(m map[string]float64) *Logger {
+	return l.MetricsFloatAs(m, None)
 }
 
 // MetricAs puts int metric with MetricUnit on default context.
@@ -119,9 +129,25 @@ func (l *Logger) MetricAs(name string, value int, unit MetricUnit) *Logger {
 	return l
 }
 
+// Metrics puts all of the int metrics with MetricUnit on default context.
+func (l *Logger) MetricsAs(m map[string]int, unit MetricUnit) *Logger {
+	for name, value := range m {
+		l.defaultContext.put(name, value, unit)
+	}
+	return l
+}
+
 // MetricFloatAs puts float metric with MetricUnit on default context.
 func (l *Logger) MetricFloatAs(name string, value float64, unit MetricUnit) *Logger {
 	l.defaultContext.put(name, value, unit)
+	return l
+}
+
+// MetricsFloatAs puts all of the float metrics with MetricUnit on default context.
+func (l *Logger) MetricsFloatAs(m map[string]float64, unit MetricUnit) *Logger {
+	for name, value := range m {
+		l.defaultContext.put(name, value, unit)
+	}
 	return l
 }
 
