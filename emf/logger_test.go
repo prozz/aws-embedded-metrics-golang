@@ -213,7 +213,7 @@ func TestLogger_LogSampled(t *testing.T) {
 		}
 	})
 }
-≠
+
 func setenv(t *testing.T, env map[string]string) {
 	for k, v := range env {
 		err := os.Setenv(k, v)
