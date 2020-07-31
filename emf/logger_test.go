@@ -2,11 +2,12 @@ package emf_test
 
 import (
 	"bytes"
-	"github.com/kinbiko/jsonassert"
-	"github.com/prozz/aws-embedded-metrics-golang/emf"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/kinbiko/jsonassert"
+	"github.com/prozz/aws-embedded-metrics-golang/emf"
 )
 
 func TestEmf(t *testing.T) {
