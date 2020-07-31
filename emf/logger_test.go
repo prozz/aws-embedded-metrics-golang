@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/kinbiko/jsonassert"
 	"github.com/prozz/aws-embedded-metrics-golang/emf"
-	"github.com/tj/assert"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -199,7 +198,9 @@ func TestEmf(t *testing.T) {
 		logger := emf.NewFor(&buf)
 		logger.Log()
 
-		assert.Empty(t, buf.String())
+		if buf.String() != "" {
+			t.Error("Buffer not empty")
+		}
 	})
 
 	t.Run("new context, no metrics set", func(t *testing.T) {
@@ -208,7 +209,9 @@ func TestEmf(t *testing.T) {
 		logger.NewContext().Namespace("galaxy")
 		logger.Log()
 
-		assert.Empty(t, buf.String())
+		if buf.String() != "" {
+			t.Error("Buffer not empty")
+		}
 	})
 }
 
