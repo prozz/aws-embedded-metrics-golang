@@ -162,6 +162,11 @@ func (l *Logger) Log() {
 		// TODO check if not empty as above?
 		metrics = append(metrics, v.metricDirective)
 	}
+
+	if len(metrics) == 0 {
+		return
+	}
+
 	l.values["_aws"] = Metadata{
 		Timestamp: l.timestamp,
 		Metrics:   metrics,

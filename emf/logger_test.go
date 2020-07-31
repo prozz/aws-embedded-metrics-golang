@@ -171,6 +171,11 @@ func TestEmf(t *testing.T) {
 			},
 			expected: "testdata/16.json",
 		},
+		{
+			name:     "no metrics set",
+			given:    func(logger *emf.Logger) {},
+			expected: "testdata/17.txt",
+		},
 	}
 
 	for _, tc := range tcs {
