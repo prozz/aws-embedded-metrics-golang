@@ -1,4 +1,2 @@
-git.naspersclassifieds.com/Pawel.Rozynek/aws-embedded-metrics-golang v0.0.0-20200605204858-b8ba9d02bc89 h1:CBLZZgcGL8VUl9+N8t71yZgMF16Qwk4i5l7Lw1LafQY=
-git.naspersclassifieds.com/Pawel.Rozynek/aws-embedded-metrics-golang v0.0.0-20200605204858-b8ba9d02bc89/go.mod h1:GLqH9LFDevA5Hss5EuOU+N77htYcG4/d3X2JMMo9yUY=
 github.com/kinbiko/jsonassert v1.0.1 h1:8gdLmUaPWuxk2TzQSofKRqatFH6zwTF6AsUH4bugJYY=
 github.com/kinbiko/jsonassert v1.0.1/go.mod h1:QRwBwiAsrcJpjw+L+Q4WS8psLxuUY+HylVZS/4j74TM=

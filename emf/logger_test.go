@@ -2,12 +2,11 @@ package emf_test
 
 import (
 	"bytes"
+	"github.com/kinbiko/jsonassert"
+	"github.com/prozz/aws-embedded-metrics-golang/emf"
 	"io/ioutil"
 	"os"
 	"testing"
-
-	"github.com/kinbiko/jsonassert"
-	"github.com/prozz/aws-embedded-metrics-golang/emf"
 )
 
 func TestEmf(t *testing.T) {
@@ -193,6 +192,27 @@ func TestEmf(t *testing.T) {
 			jsonassert.New(t).Assertf(buf.String(), string(f))
 		})
 	}
+
+	t.Run("no metrics set", func(t *testing.T) {
+		var buf bytes.Buffer
+		logger := emf.NewFor(&buf)
+		logger.Log()
+
+		if buf.String() != "" {
+			t.Error("Buffer not empty")
+		}
+	})
+
+	t.Run("new context, no metrics set", func(t *testing.T) {
+		var buf bytes.Buffer
+		logger := emf.NewFor(&buf)
+		logger.NewContext().Namespace("galaxy")
+		logger.Log()
+
+		if buf.String() != "" {
+			t.Error("Buffer not empty")
+		}
+	})
 }
 
 func setenv(t *testing.T, env map[string]string) {
