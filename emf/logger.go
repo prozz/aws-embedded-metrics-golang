@@ -159,8 +159,9 @@ func (l *Logger) Log() {
 		metrics = append(metrics, l.defaultContext.metricDirective)
 	}
 	for _, v := range l.contexts {
-		// TODO check if not empty as above?
-		metrics = append(metrics, v.metricDirective)
+		if len(v.metricDirective.Metrics) > 0 {
+			metrics = append(metrics, v.metricDirective)
+		}
 	}
 
 	if len(metrics) == 0 {
