@@ -26,10 +26,10 @@ emf.New().DimensionSet(emf.NewDimension("format", "edh"), emf.NewDimension("comm
 
 You may also use the lib together with `defer`.
 ```
-m := emf.New() // or some more complicated init setting up whatever you fancy
+m := emf.New() // sets up whatever you fancy here
 defer m.Log()
 
-// any reporting metrics calls here
+// any reporting metrics calls
 ```
 
 Functions for reporting metrics:
