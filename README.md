@@ -20,7 +20,9 @@ emf.New().Namespace("mtg").Metric("totalWins", 1500).Log()
 emf.New().Dimension("colour", "red").
     MetricAs("gameLength", 2, emf.Seconds).Log()
 
-emf.New().DimensionSet(emf.NewDimension("format", "edh"), emf.NewDimension("commander", "Muldrotha")).
+emf.New().DimensionSet(
+        emf.NewDimension("format", "edh"), 
+        emf.NewDimension("commander", "Muldrotha")).
     MetricAs("wins", 1499, emf.Count).Log()
 ```
 
