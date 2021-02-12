@@ -24,13 +24,29 @@ type Context struct {
 	values          map[string]interface{}
 }
 
-// New creates logger printing to os.Stdout, perfect for Lambda functions.
-func New() *Logger {
-	return NewFor(os.Stdout)
+// NewOption defines a function that can be used to customize a logger.
+type NewOption func(l *Logger)
+
+// WithWriter customizes the writer used by a logger.
+func WithWriter(w io.Writer) NewOption {
+	return func(l *Logger) {
+		l.out = w
+	}
 }
 
-// NewFor creates logger printing to any suitable writer.
-func NewFor(out io.Writer) *Logger {
+// WithTimestamp customizes the timestamp used by a logger.
+func WithTimestamp(t time.Time) NewOption {
+	return func(l *Logger) {
+		l.timestamp = t.UnixNano() / int64(time.Millisecond)
+	}
+}
+
+// NewWith creates logger with reasonable defaults for Lambda functions:
+// - Prints to os.Stdout.
+// - Context based on Lambda environment variables.
+// - Timestamp set to the time when NewWith was called.
+// Specify NewOptions to customize the logger.
+func NewWith(opts ...NewOption) *Logger {
 	values := make(map[string]interface{})
 
 	// set default properties for lambda function
@@ -48,12 +64,32 @@ func NewFor(out io.Writer) *Logger {
 		values["traceId"] = amznTraceID
 	}
 
-	return &Logger{
-		out:            out,
+	// create a default logger
+	l := &Logger{
+		out:            os.Stdout,
 		defaultContext: newContext(values),
 		values:         values,
 		timestamp:      time.Now().UnixNano() / int64(time.Millisecond),
 	}
+
+	// apply any options
+	for _, opt := range opts {
+		opt(l)
+	}
+
+	return l
+}
+
+// New creates logger printing to os.Stdout, perfect for Lambda functions.
+// Deprecated: use NewWith instead.
+func New() *Logger {
+	return NewWith(WithWriter(os.Stdout))
+}
+
+// NewFor creates logger printing to any suitable writer.
+// Deprecated: use NewWith and WithWriter instead.
+func NewFor(out io.Writer) *Logger {
+	return NewWith(WithWriter(out))
 }
 
 // Dimension helps builds DimensionSet.
@@ -129,7 +165,7 @@ func (l *Logger) MetricAs(name string, value int, unit MetricUnit) *Logger {
 	return l
 }
 
-// Metrics puts all of the int metrics with MetricUnit on default context.
+// MetricsAs puts all of the int metrics with MetricUnit on default context.
 func (l *Logger) MetricsAs(m map[string]int, unit MetricUnit) *Logger {
 	for name, value := range m {
 		l.defaultContext.put(name, value, unit)
