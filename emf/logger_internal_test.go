@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func TestNewWith(t *testing.T) {
+func TestNew(t *testing.T) {
 	tcs := []struct {
 		name     string
-		opts     []NewOption
+		opts     []LoggerOption
 		expected *Logger
 	}{
 		{
@@ -22,7 +22,7 @@ func TestNewWith(t *testing.T) {
 		},
 		{
 			name: "with options",
-			opts: []NewOption{
+			opts: []LoggerOption{
 				WithWriter(os.Stderr),
 				WithTimestamp(time.Now().Add(time.Hour)),
 			},
@@ -35,7 +35,7 @@ func TestNewWith(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := NewWith(tc.opts...)
+			actual := New(tc.opts...)
 			if err := loggersEqual(actual, tc.expected); err != nil {
 				t.Errorf("logger does not match: %v", err)
 			}

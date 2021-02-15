@@ -181,7 +181,7 @@ func TestEmf(t *testing.T) {
 			}
 
 			var buf bytes.Buffer
-			logger := emf.NewFor(&buf)
+			logger := emf.New(emf.WithWriter(&buf))
 			tc.given(logger)
 			logger.Log()
 
@@ -196,7 +196,7 @@ func TestEmf(t *testing.T) {
 
 	t.Run("no metrics set", func(t *testing.T) {
 		var buf bytes.Buffer
-		logger := emf.NewFor(&buf)
+		logger := emf.New(emf.WithWriter(&buf))
 		logger.Log()
 
 		if buf.String() != "" {
@@ -206,7 +206,7 @@ func TestEmf(t *testing.T) {
 
 	t.Run("new context, no metrics set", func(t *testing.T) {
 		var buf bytes.Buffer
-		logger := emf.NewFor(&buf)
+		logger := emf.New(emf.WithWriter(&buf))
 		logger.NewContext().Namespace("galaxy")
 		logger.Log()
 

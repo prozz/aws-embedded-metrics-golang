@@ -24,18 +24,18 @@ type Context struct {
 	values          map[string]interface{}
 }
 
-// NewOption defines a function that can be used to customize a logger.
-type NewOption func(l *Logger)
+// LoggerOption defines a function that can be used to customize a logger.
+type LoggerOption func(l *Logger)
 
 // WithWriter customizes the writer used by a logger.
-func WithWriter(w io.Writer) NewOption {
+func WithWriter(w io.Writer) LoggerOption {
 	return func(l *Logger) {
 		l.out = w
 	}
 }
 
 // WithTimestamp customizes the timestamp used by a logger.
-func WithTimestamp(t time.Time) NewOption {
+func WithTimestamp(t time.Time) LoggerOption {
 	return func(l *Logger) {
 		l.timestamp = t.UnixNano() / int64(time.Millisecond)
 	}
@@ -46,7 +46,7 @@ func WithTimestamp(t time.Time) NewOption {
 // - Context based on Lambda environment variables.
 // - Timestamp set to the time when NewWith was called.
 // Specify NewOptions to customize the logger.
-func NewWith(opts ...NewOption) *Logger {
+func New(opts ...LoggerOption) *Logger {
 	values := make(map[string]interface{})
 
 	// set default properties for lambda function
@@ -78,18 +78,6 @@ func NewWith(opts ...NewOption) *Logger {
 	}
 
 	return l
-}
-
-// New creates logger printing to os.Stdout, perfect for Lambda functions.
-// Deprecated: use NewWith instead.
-func New() *Logger {
-	return NewWith(WithWriter(os.Stdout))
-}
-
-// NewFor creates logger printing to any suitable writer.
-// Deprecated: use NewWith and WithWriter instead.
-func NewFor(out io.Writer) *Logger {
-	return NewWith(WithWriter(out))
 }
 
 // Dimension helps builds DimensionSet.
