@@ -1,4 +1,4 @@
-// Spec available here: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html
+// Package emf implements the spec available here: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html
 package emf
 
 // Metadata struct as defined in AWS Embedded Metrics Format spec.
