@@ -46,7 +46,6 @@ func TestNew(t *testing.T) {
 
 // loggersEqual returns a non-nil error if the loggers do not match.
 // Currently it only checks that the loggers' output writer and timestamp match.
-// TODO: expand the checks here as more NewOptions are added.
 func loggersEqual(actual, expected *Logger) error {
 	if actual.out != expected.out {
 		return fmt.Errorf("output does not match")

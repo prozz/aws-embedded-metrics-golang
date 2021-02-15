@@ -41,11 +41,11 @@ func WithTimestamp(t time.Time) LoggerOption {
 	}
 }
 
-// NewWith creates logger with reasonable defaults for Lambda functions:
+// New creates logger with reasonable defaults for Lambda functions:
 // - Prints to os.Stdout.
 // - Context based on Lambda environment variables.
 // - Timestamp set to the time when NewWith was called.
-// Specify NewOptions to customize the logger.
+// Specify LoggerOptions to customize the logger.
 func New(opts ...LoggerOption) *Logger {
 	values := make(map[string]interface{})
 
