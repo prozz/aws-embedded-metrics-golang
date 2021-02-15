@@ -39,7 +39,7 @@ defer m.Log()
 
 Customizing the logger:
 ```
-emf.NewWith(
+emf.New(
     emf.WithWriter(os.Stderr), // Log to stderr.
     emf.WithTimestamp(time.Now().Add(-time.Hour)), // Record past metrics.
 )
