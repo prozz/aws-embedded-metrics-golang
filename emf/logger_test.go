@@ -216,7 +216,6 @@ func TestEmf(t *testing.T) {
 	})
 }
 
-
 func TestEmfNoDefaultDimensions(t *testing.T) {
 	tcs := []struct {
 		name     string
