@@ -80,6 +80,29 @@ func New(opts ...LoggerOption) *Logger {
 	return l
 }
 
+// NewWithoutDefaultDimensions creates a logger without any default dimensions or tracing specific behavior:
+// - Prints to os.Stdout.
+// - Timestamp set to the time when New was called.
+// Specify LoggerOptions to customize the logger.
+func NewWithoutDefaultDimensions(opts ...LoggerOption) *Logger {
+	values := make(map[string]interface{})
+
+	// create a default logger
+	l := &Logger{
+		out:            os.Stdout,
+		defaultContext: newContextNoDefaultDimensions(values),
+		values:         values,
+		timestamp:      time.Now().UnixNano() / int64(time.Millisecond),
+	}
+
+	// apply any options
+	for _, opt := range opts {
+		opt(l)
+	}
+
+	return l
+}
+
 // Dimension helps builds DimensionSet.
 type Dimension struct {
 	Key, Value string
@@ -260,6 +283,18 @@ func newContext(values map[string]interface{}) Context {
 		values["ServiceType"] = "AWS::Lambda::Function"
 		values["ServiceName"] = fnName
 	}
+
+	return Context{
+		metricDirective: MetricDirective{
+			Namespace:  "aws-embedded-metrics",
+			Dimensions: defaultDimensions,
+		},
+		values: values,
+	}
+}
+
+func newContextNoDefaultDimensions(values map[string]interface{}) Context {
+	var defaultDimensions []DimensionSet
 
 	return Context{
 		metricDirective: MetricDirective{
