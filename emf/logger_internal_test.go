@@ -31,6 +31,17 @@ func TestNew(t *testing.T) {
 				timestamp: time.Now().Add(time.Hour).UnixNano() / int64(time.Millisecond),
 			},
 		},
+		{
+			name: "without dimensions",
+			opts: []LoggerOption{
+				WithoutDimensions(),
+			},
+			expected: &Logger{
+				out:       os.Stdout,
+				timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+				withoutDimensions: false,
+			},
+		},
 	}
 
 	for _, tc := range tcs {

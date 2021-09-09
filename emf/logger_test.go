@@ -13,8 +13,9 @@ import (
 func TestEmf(t *testing.T) {
 	tcs := []struct {
 		name     string
+		new      func(*bytes.Buffer) *emf.Logger
 		env      map[string]string
-		given    func(logger *emf.Logger)
+		given    func(*emf.Logger)
 		expected string
 	}{
 		{
@@ -171,6 +172,23 @@ func TestEmf(t *testing.T) {
 			},
 			expected: "testdata/16.json",
 		},
+		{
+			name: "default properties and dimensions for lambda are ignored",
+			new: func(buf *bytes.Buffer) *emf.Logger {
+				return emf.New(emf.WithoutDimensions(), emf.WithWriter(buf))
+			},
+			env: map[string]string{
+				"AWS_LAMBDA_FUNCTION_NAME":        "some-func-name",
+				"AWS_EXECUTION_ENV":               "golang",
+				"AWS_LAMBDA_FUNCTION_MEMORY_SIZE": "128",
+				"AWS_LAMBDA_FUNCTION_VERSION":     "1",
+				"AWS_LAMBDA_LOG_STREAM_NAME":      "log/stream",
+			},
+			given: func(logger *emf.Logger) {
+				logger.Metric("foo", 33)
+			},
+			expected: "testdata/17.json",
+		},
 	}
 
 	for _, tc := range tcs {
@@ -181,10 +199,16 @@ func TestEmf(t *testing.T) {
 			}
 
 			var buf bytes.Buffer
-			logger := emf.New(emf.WithWriter(&buf))
+			var logger *emf.Logger
+			if tc.new != nil {
+				logger = tc.new(&buf)
+			} else {
+				logger = emf.New(emf.WithWriter(&buf))
+			}
 			tc.given(logger)
 			logger.Log()
 
+			println(buf.String())
 			f, err := ioutil.ReadFile(tc.expected)
 			if err != nil {
 				t.Fatal("unable to read file with expected json")

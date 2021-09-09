@@ -11,11 +11,12 @@ import (
 
 // Logger for metrics with default Context.
 type Logger struct {
-	out            io.Writer
-	timestamp      int64
-	defaultContext Context
-	contexts       []*Context
-	values         map[string]interface{}
+	out               io.Writer
+	timestamp         int64
+	defaultContext    Context
+	contexts          []*Context
+	values            map[string]interface{}
+	withoutDimensions bool
 }
 
 // Context gives ability to add another MetricDirective section for Logger.
@@ -41,21 +42,40 @@ func WithTimestamp(t time.Time) LoggerOption {
 	}
 }
 
+// WithoutDimensions ignores default AWS Lambda related properties and dimensions.
+func WithoutDimensions() LoggerOption {
+	return func(l *Logger) {
+		l.withoutDimensions = true
+	}
+}
+
 // New creates logger with reasonable defaults for Lambda functions:
 // - Prints to os.Stdout.
 // - Context based on Lambda environment variables.
 // - Timestamp set to the time when New was called.
 // Specify LoggerOptions to customize the logger.
 func New(opts ...LoggerOption) *Logger {
+	l := Logger{
+		out:       os.Stdout,
+		timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+	}
+
+	// apply any options
+	for _, opt := range opts {
+		opt(&l)
+	}
+
 	values := make(map[string]interface{})
 
-	// set default properties for lambda function
-	fnName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
-	if fnName != "" {
-		values["executionEnvironment"] = os.Getenv("AWS_EXECUTION_ENV")
-		values["memorySize"] = os.Getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE")
-		values["functionVersion"] = os.Getenv("AWS_LAMBDA_FUNCTION_VERSION")
-		values["logStreamId"] = os.Getenv("AWS_LAMBDA_LOG_STREAM_NAME")
+	if !l.withoutDimensions {
+		// set default properties for lambda function
+		fnName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
+		if fnName != "" {
+			values["executionEnvironment"] = os.Getenv("AWS_EXECUTION_ENV")
+			values["memorySize"] = os.Getenv("AWS_LAMBDA_FUNCTION_MEMORY_SIZE")
+			values["functionVersion"] = os.Getenv("AWS_LAMBDA_FUNCTION_VERSION")
+			values["logStreamId"] = os.Getenv("AWS_LAMBDA_LOG_STREAM_NAME")
+		}
 	}
 
 	// only collect traces which have been sampled
@@ -64,20 +84,10 @@ func New(opts ...LoggerOption) *Logger {
 		values["traceId"] = amznTraceID
 	}
 
-	// create a default logger
-	l := &Logger{
-		out:            os.Stdout,
-		defaultContext: newContext(values),
-		values:         values,
-		timestamp:      time.Now().UnixNano() / int64(time.Millisecond),
-	}
+	l.values = values
+	l.defaultContext = newContext(values, l.withoutDimensions)
 
-	// apply any options
-	for _, opt := range opts {
-		opt(l)
-	}
-
-	return l
+	return &l
 }
 
 // Dimension helps builds DimensionSet.
@@ -201,7 +211,7 @@ func (l *Logger) Log() {
 
 // NewContext creates new context for given logger.
 func (l *Logger) NewContext() *Context {
-	c := newContext(l.values)
+	c := newContext(l.values, l.withoutDimensions)
 	l.contexts = append(l.contexts, &c)
 	return &c
 }
@@ -250,15 +260,16 @@ func (c *Context) MetricFloatAs(name string, value float64, unit MetricUnit) *Co
 	return c.put(name, value, unit)
 }
 
-func newContext(values map[string]interface{}) Context {
+func newContext(values map[string]interface{}, withoutDimensions bool) Context {
 	var defaultDimensions []DimensionSet
-
-	// set default dimensions for lambda function
-	fnName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
-	if fnName != "" {
-		defaultDimensions = []DimensionSet{{"ServiceName", "ServiceType"}}
-		values["ServiceType"] = "AWS::Lambda::Function"
-		values["ServiceName"] = fnName
+	if !withoutDimensions {
+		// set default dimensions for lambda function
+		fnName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
+		if fnName != "" {
+			defaultDimensions = []DimensionSet{{"ServiceName", "ServiceType"}}
+			values["ServiceType"] = "AWS::Lambda::Function"
+			values["ServiceName"] = fnName
+		}
 	}
 
 	return Context{
