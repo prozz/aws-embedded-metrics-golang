@@ -43,6 +43,7 @@ emf.New(
     emf.WithWriter(os.Stderr), // Log to stderr.
     emf.WithTimestamp(time.Now().Add(-time.Hour)), // Record past metrics.
     emf.WithoutDimensions(), // Do not include useful Lambda related dimensions.
+    emf.WithLogGroup("my-logs") // Add specific log group.
 )
 ```
 
