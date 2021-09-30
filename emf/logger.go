@@ -17,6 +17,7 @@ type Logger struct {
 	contexts          []*Context
 	values            map[string]interface{}
 	withoutDimensions bool
+	logGroupName      string
 }
 
 // Context gives ability to add another MetricDirective section for Logger.
@@ -46,6 +47,13 @@ func WithTimestamp(t time.Time) LoggerOption {
 func WithoutDimensions() LoggerOption {
 	return func(l *Logger) {
 		l.withoutDimensions = true
+	}
+}
+
+// WithLogGroup sets the log group when ingesting metrics into Cloudwatch Logging Agent.
+func WithLogGroup(logGroup string) LoggerOption {
+	return func(l *Logger) {
+		l.logGroupName = logGroup
 	}
 }
 
@@ -202,8 +210,9 @@ func (l *Logger) Log() {
 	}
 
 	l.values["_aws"] = Metadata{
-		Timestamp: l.timestamp,
-		Metrics:   metrics,
+		Timestamp:    l.timestamp,
+		Metrics:      metrics,
+		LogGroupName: l.logGroupName,
 	}
 	buf, _ := json.Marshal(l.values)
 	_, _ = fmt.Fprintln(l.out, string(buf))

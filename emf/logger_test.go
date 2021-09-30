@@ -189,6 +189,16 @@ func TestEmf(t *testing.T) {
 			},
 			expected: "testdata/17.json",
 		},
+		{
+			name: "with log group",
+			new: func(buf *bytes.Buffer) *emf.Logger {
+				return emf.New(emf.WithLogGroup("test_log_group"), emf.WithWriter(buf))
+			},
+			given: func(logger *emf.Logger) {
+				logger.Metric("foo", 33)
+			},
+			expected: "testdata/18.json",
+		},
 	}
 
 	for _, tc := range tcs {

@@ -1,0 +1,19 @@
+{
+  "_aws": {
+    "Timestamp": "<<PRESENCE>>",
+    "LogGroupName": "test_log_group",
+    "CloudWatchMetrics": [
+      {
+        "Metrics": [
+          {
+            "Name": "foo",
+            "Unit": "None"
+          }
+        ],
+        "Namespace": "aws-embedded-metrics",
+        "Dimensions": null
+      }
+    ]
+  },
+  "foo": 33
+}

@@ -3,8 +3,9 @@ package emf
 
 // Metadata struct as defined in AWS Embedded Metrics Format spec.
 type Metadata struct {
-	Timestamp int64             `json:"Timestamp"`
-	Metrics   []MetricDirective `json:"CloudWatchMetrics"`
+	Timestamp    int64             `json:"Timestamp"`
+	Metrics      []MetricDirective `json:"CloudWatchMetrics"`
+	LogGroupName string            `json:"LogGroupName,omitempty"`
 }
 
 // MetricDirective struct as defined in AWS Embedded Metrics Format spec.
