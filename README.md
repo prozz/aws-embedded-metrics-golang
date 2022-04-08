@@ -10,11 +10,16 @@ It's aim is to simplify reporting metrics to CloudWatch:
 - using EMF avoids additional HTTP API calls to CloudWatch as metrics are logged in JSON format to stdout
 - no need for additional dependencies in your services (or mocks in tests) to report metrics from inside your code
 - built in support for default dimensions and properties for Lambda functions
-- TODO support for default dimensions and properties for EC2 (please send pull requests)
 
 Supports namespaces, setting dimensions and properties as well as different contexts (at least partially).
 
-Usage:
+## Installation
+
+```shell
+go get github.com/prozz/aws-embedded-metrics-golang
+```
+
+## Usage
 
 ```
 emf.New().Namespace("mtg").Metric("totalWins", 1500).Log()
@@ -67,3 +72,10 @@ Functions for setting up dimensions:
 func Dimension(key, value string)
 func DimensionSet(dimensions ...Dimension) // use `func NewDimension` for creating one
 ```
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Please make sure to update tests.
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
