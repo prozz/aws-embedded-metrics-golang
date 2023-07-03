@@ -2,6 +2,7 @@ package emf_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -225,6 +226,11 @@ func TestEmf(t *testing.T) {
 			}
 
 			jsonassert.New(t).Assertf(buf.String(), string(f))
+
+			// test Build() to generate the same structure as Log()
+			metrics := logger.Build()
+			metricsJson, _ := json.Marshal(metrics)
+			jsonassert.New(t).Assertf(string(metricsJson), string(f))
 		})
 	}
 
@@ -238,6 +244,14 @@ func TestEmf(t *testing.T) {
 		}
 	})
 
+	t.Run("no metrics set, with build", func(t *testing.T) {
+		m := emf.New().Build()
+
+		if len(m) > 0 {
+			t.Error("Map not empty")
+		}
+	})
+
 	t.Run("new context, no metrics set", func(t *testing.T) {
 		var buf bytes.Buffer
 		logger := emf.New(emf.WithWriter(&buf))
@@ -246,6 +260,16 @@ func TestEmf(t *testing.T) {
 
 		if buf.String() != "" {
 			t.Error("Buffer not empty")
+		}
+	})
+
+	t.Run("new context, no metrics set, with build", func(t *testing.T) {
+		logger := emf.New()
+		logger.NewContext().Namespace("galaxy")
+		m := logger.Build()
+
+		if len(m) > 0 {
+			t.Error("Map not empty")
 		}
 	})
 }
