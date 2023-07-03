@@ -3,7 +3,6 @@ package emf_test
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -220,7 +219,7 @@ func TestEmf(t *testing.T) {
 			logger.Log()
 
 			println(buf.String())
-			f, err := ioutil.ReadFile(tc.expected)
+			f, err := os.ReadFile(tc.expected)
 			if err != nil {
 				t.Fatal("unable to read file with expected json")
 			}
