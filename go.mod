@@ -1,4 +1,4 @@
-module github.com/prozz/aws-embedded-metrics-golang
+module github.com/gaeste/aws-embedded-metrics-golang
 
 go 1.20
 

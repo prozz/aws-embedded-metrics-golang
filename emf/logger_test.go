@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gaeste/aws-embedded-metrics-golang/emf"
 	"github.com/kinbiko/jsonassert"
-	"github.com/prozz/aws-embedded-metrics-golang/emf"
 )
 
 func TestEmf(t *testing.T) {
