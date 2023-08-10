@@ -2,12 +2,12 @@ package emf_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"encoding/json"
 	"os"
 	"testing"
 
+	"github.com/gaeste/aws-embedded-metrics-golang/emf"
 	"github.com/kinbiko/jsonassert"
-	"github.com/prozz/aws-embedded-metrics-golang/emf"
 )
 
 func TestEmf(t *testing.T) {
@@ -219,12 +219,17 @@ func TestEmf(t *testing.T) {
 			logger.Log()
 
 			println(buf.String())
-			f, err := ioutil.ReadFile(tc.expected)
+			f, err := os.ReadFile(tc.expected)
 			if err != nil {
 				t.Fatal("unable to read file with expected json")
 			}
 
 			jsonassert.New(t).Assertf(buf.String(), string(f))
+
+			// test Build() to generate the same structure as Log()
+			metrics := logger.Build()
+			metricsJson, _ := json.Marshal(metrics)
+			jsonassert.New(t).Assertf(string(metricsJson), string(f))
 		})
 	}
 
@@ -238,6 +243,14 @@ func TestEmf(t *testing.T) {
 		}
 	})
 
+	t.Run("no metrics set, with build", func(t *testing.T) {
+		m := emf.New().Build()
+
+		if len(m) > 0 {
+			t.Error("Map not empty")
+		}
+	})
+
 	t.Run("new context, no metrics set", func(t *testing.T) {
 		var buf bytes.Buffer
 		logger := emf.New(emf.WithWriter(&buf))
@@ -246,6 +259,16 @@ func TestEmf(t *testing.T) {
 
 		if buf.String() != "" {
 			t.Error("Buffer not empty")
+		}
+	})
+
+	t.Run("new context, no metrics set, with build", func(t *testing.T) {
+		logger := emf.New()
+		logger.NewContext().Namespace("galaxy")
+		m := logger.Build()
+
+		if len(m) > 0 {
+			t.Error("Map not empty")
 		}
 	})
 }
