@@ -1,11 +1,11 @@
 # aws-embedded-metrics-golang
 
-![test](https://github.com/prozz/aws-embedded-metrics-golang/workflows/test/badge.svg?branch=master)
-![golangci-lint](https://github.com/prozz/aws-embedded-metrics-golang/workflows/lint/badge.svg?branch=master)
+![test](https://github.com/gaeste/aws-embedded-metrics-golang/workflows/test/badge.svg?branch=master)
+![golangci-lint](https://github.com/gaeste/aws-embedded-metrics-golang/workflows/lint/badge.svg?branch=master)
 
-Go implementation of AWS CloudWatch [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)
+Go implementation of [AWS CloudWatch Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html).
 
-It's aim is to simplify reporting metrics to CloudWatch:
+The aim is to simplify reporting metrics to CloudWatch:
 
 - using EMF avoids additional HTTP API calls to CloudWatch as metrics are logged in JSON format to stdout
 - no need for additional dependencies in your services (or mocks in tests) to report metrics from inside your code
@@ -16,7 +16,7 @@ Supports namespaces, setting dimensions and properties as well as different cont
 ## Installation
 
 ```shell
-go get github.com/prozz/aws-embedded-metrics-golang
+go get github.com/gaeste/aws-embedded-metrics-golang
 ```
 
 ## Usage
@@ -24,13 +24,24 @@ go get github.com/prozz/aws-embedded-metrics-golang
 ```
 emf.New().Namespace("mtg").Metric("totalWins", 1500).Log()
 
-emf.New().Dimension("colour", "red").
-    MetricAs("gameLength", 2, emf.Seconds).Log()
+emf.New().
+    Dimension("colour", "red").
+    MetricAs("gameLength", 2, emf.Seconds).
+    Log()
 
-emf.New().DimensionSet(
+emf.New().
+    DimensionSet(
         emf.NewDimension("format", "edh"),
-        emf.NewDimension("commander", "Muldrotha")).
-    MetricAs("wins", 1499, emf.Count).Log()
+        emf.NewDimension("commander", "Muldrotha")
+    ).
+    MetricAs("wins", 1499, emf.Count).
+    Log()
+    
+metrics := emf.New().
+               Namespace("mtg").
+               Metric("totalWins", 1500).
+               Build()
+log.With(metrics).Info("log message with metrics attached as named value pair")
 ```
 
 You may also use the lib together with `defer`.

@@ -195,6 +195,22 @@ func (l *Logger) MetricsFloatAs(m map[string]float64, unit MetricUnit) *Logger {
 
 // Log prints all Contexts and metric values to chosen output in Embedded Metric Format.
 func (l *Logger) Log() {
+	emf := l.build()
+	if len(emf) == 0 {
+		return
+	}
+
+	buf, _ := json.Marshal(emf)
+	_, _ = fmt.Fprintln(l.out, string(buf))
+}
+
+// Build constructs the EMF structure as a map that includes all Contexts and metric values.
+// The map is arranged according to Embedded Metric Format.
+func (l *Logger) Build() map[string]interface{} {
+	return l.build()
+}
+
+func (l *Logger) build() map[string]interface{} {
 	var metrics []MetricDirective
 	if len(l.defaultContext.metricDirective.Metrics) > 0 {
 		metrics = append(metrics, l.defaultContext.metricDirective)
@@ -206,7 +222,7 @@ func (l *Logger) Log() {
 	}
 
 	if len(metrics) == 0 {
-		return
+		return map[string]interface{}{}
 	}
 
 	l.values["_aws"] = Metadata{
@@ -214,8 +230,8 @@ func (l *Logger) Log() {
 		Metrics:      metrics,
 		LogGroupName: l.logGroupName,
 	}
-	buf, _ := json.Marshal(l.values)
-	_, _ = fmt.Fprintln(l.out, string(buf))
+
+	return l.values
 }
 
 // NewContext creates new context for given logger.
